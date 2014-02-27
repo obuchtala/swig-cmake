@@ -59,9 +59,9 @@ configure_file(
 )
 
 # PCRE
-if (NOT WIN32)
-    find_package(PCRE REQUIRED)
-endif()
+#if (NOT WIN32)
+    find_package(PCRE)
+#endif()
 
 # Compiler flags
 # --------------
@@ -74,9 +74,13 @@ include_directories(
     "${SWIG_SOURCE_DIR}/Preprocessor"
     "${SWIG_SOURCE_DIR}/Modules"
     "${PROJECT_BINARY_DIR}/Source/Include"
-    "${PCRE_INCLUDE_DIRS}"
 )
 
+if (PCRE)
+    include_directories(
+        "${PCRE_INCLUDE_DIRS}"
+    )
+endif()
 # Pre-Build
 # ---------
 

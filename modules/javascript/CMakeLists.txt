@@ -1,7 +1,4 @@
-
-if (WIN32)
-
-elseif (APPLE)
+if (APPLE)
 
 	find_library(JavascriptCore JavascriptCore)
 
@@ -15,8 +12,6 @@ elseif (APPLE)
 		LIST(APPEND Javascript_Libraries ${JavascriptCore})
 	endif()
 
-else()
-
+	add_subdirectory(interpreter)
 endif()
 
-add_subdirectory(interpreter)
