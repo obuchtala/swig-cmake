@@ -208,10 +208,3 @@ add_custom_command(TARGET swig POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy ${_SWIG_EXECUTABLE} ${_SWIG_EXE_DIST}
 )
 set(SWIG_EXECUTABLE ${_SWIG_EXE_DIST} CACHE INTERNAL "swig executable")
-
-# The test suite definition
-include(TestSuite)
-
-# Language specific configurations
-
-add_subdirectory("javascript")
