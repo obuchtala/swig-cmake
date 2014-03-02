@@ -31,6 +31,15 @@ JS_TESTSUITE_DIR = File.join(TEST_SUITE_DIR, 'javascript')
 
 		task "#{target_name}:setup" do
 
+			binding_gyp = File.join(test_dir, 'binding.gyp')
+			index_js = File.join(test_dir, 'index.js')
+
+			# skip this if the generated files already exist
+			# TODO: this should be done smarter, more rake-ishy
+			if (File.exist?(binding_gyp) && File.exist?(index_js) && (!has_runner || File.exist?(runner)))
+				next
+			end
+
 			if has_runner
 				puts "Running test-case '#{test.name}' for javascript (node)"
 			else
@@ -44,14 +53,14 @@ JS_TESTSUITE_DIR = File.join(TEST_SUITE_DIR, 'javascript')
 
 			mkdir_p test_dir, :verbose=>false # unless Dir.exist? test_dir
 
-			template File.join(test_dir, 'binding.gyp') do
+			template binding_gyp do
 				source File.join(SOURCE_DIR, 'node-template', 'binding.gyp.erb')
 				values 	:testcase => test.name,
 						:wrapper => wrapper,
 						:gyp_cflags => ''
 			end
 
-			template File.join(test_dir, 'index.js') do
+			template index_js do
 				source File.join(SOURCE_DIR, 'node-template', 'index.js.erb')
 				values 	:testcase => test.name
 			end
@@ -62,6 +71,12 @@ JS_TESTSUITE_DIR = File.join(TEST_SUITE_DIR, 'javascript')
 		end
 
 		task "#{target_name}:build" => "#{target_name}:setup" do
+
+			# skip this step if it already exists
+			# TODO should be done smarter - more rake-ishy
+			if (File.exist?(File.join(test_dir, "build", "Release", "#{test.name}.node")))
+				next
+			end
 
 			swig File.join(TEST_SUITE_DIR, test.name + ".i") do
 				cpp !test.is_c?
@@ -74,7 +89,7 @@ JS_TESTSUITE_DIR = File.join(TEST_SUITE_DIR, 'javascript')
 				Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
 				  exit_status = wait_thr.value
 				  unless exit_status.success?
-				    STDOUT.puts "BUILD FAILED: #{cmd}"
+				    STDOUT.puts "BUILD FAILED: #{test.name}"
 				  end
 				end
 			end
