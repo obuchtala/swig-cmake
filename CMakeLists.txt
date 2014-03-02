@@ -3,17 +3,19 @@ cmake_minimum_required(VERSION 2.8)
 
 include(ExternalProject)
 
-# Pull in the Swig repository
+# TODO: you need to clone the swig repository manually
 
 # TODO: this should be extracted from the SWIG repos
-set(SWIG_VERSION 3.0.0-beta1)
-set(SWIG_ROOT ${PROJECT_SOURCE_DIR}/swig)
+set(SWIG_VERSION 3.0.0)
+
+if (NOT SWIG_ROOT)
+    set(SWIG_ROOT ${PROJECT_SOURCE_DIR}/swig)
+endif()
 
 # Project wide configuration variables
 # ------------------------------------
 
 set(SWIG_SOURCE_DIR "${SWIG_ROOT}/Source" CACHE INTERNAL "Path of swig sources" FORCE)
-
 
 # Options
 # -------
@@ -199,10 +201,17 @@ add_executable(swig
 target_link_libraries(swig cparse preprocessor doh core modules ${PCRE_LIBRARIES})
 
 # copy binary into Dist folder
-get_property(SWIG_EXECUTABLE TARGET swig PROPERTY LOCATION)
+get_property(_SWIG_EXECUTABLE TARGET swig PROPERTY LOCATION)
+get_filename_component(_SWIG_EXE_NAME ${_SWIG_EXECUTABLE} NAME)
+set(_SWIG_EXE_DIST ${PROJECT_BINARY_DIR}/Dist/${_SWIG_EXE_NAME})
 add_custom_command(TARGET swig POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy ${SWIG_EXECUTABLE} ${PROJECT_BINARY_DIR}/Dist
+    COMMAND ${CMAKE_COMMAND} -E copy ${_SWIG_EXECUTABLE} ${_SWIG_EXE_DIST}
 )
+set(SWIG_EXECUTABLE ${_SWIG_EXE_DIST} CACHE INTERNAL "swig executable")
+
+# The test suite definition
+include(TestSuite)
 
 # Language specific configurations
-add_subdirectory("modules")
+
+add_subdirectory("javascript")
