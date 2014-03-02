@@ -34,7 +34,7 @@ Create a build directory
 
 Create the build configurations
 
-	$ cmake -G "Visual Studio 10" ..
+	$ cmake -G "Visual Studio 11" ..
 
 If you want a debug version:
 
@@ -46,13 +46,16 @@ You can choose between different CMake generators. See the CMake help:
 
 E.g., a Unix Makefile configuration is created with:
 
-	$ cmake -G "Unix Makefiles" ../..
+	$ cmake -G "Unix Makefiles" ..
 
 or for Visual Studio 2010
 
-	$ cmake -G "Visual Studio 2010" ../..
+	$ cmake -G "Visual Studio 2010" ..
 
 After configuration start the build (or open your IDE project file):
 
-	$ cd build/Release
+	$ cd build
 	$ make
+
+After a successful build you find a distribution under `build\Dist`.
+You can copy that folder to your favorite destination and add it to your system path.
